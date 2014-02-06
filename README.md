@@ -1,4 +1,1 @@
-csv-to-table
-============
-
-Creation of a CREATE TABLE statement from a CSV file.
+This is a very basic app (and a work in progress) that grabs the rows of a CSV file (sampling, if specified), uses the sample to guess at the data types of the columns, and uses these guesses to output a SQL `CREATE TABLE` statement.
