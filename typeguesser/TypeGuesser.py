@@ -21,7 +21,7 @@ class TypeGuesser(object):
         self.types = []
 
         self.dispatch = {
-            "bool": self.isBool,
+            "boolean": self.isBool,
             "date": self.isDate,
             "timestamp": self.isTimestamp,
             "numeric": self.isNumeric,
@@ -70,6 +70,7 @@ class TypeGuesser(object):
     def isTimestamp(string):
         try:
             dateParser.parse(string)
+            return True
         except:
             return False
 
@@ -83,11 +84,6 @@ class TypeGuesser(object):
 
     @staticmethod
     def isNumeric(string):
-
-        # If there's a leading zero, then it probably shouldn't be a number...
-        if string[0] not in "123456789.":
-            return False
-
         try:
             float(string)
             return True
@@ -96,7 +92,7 @@ class TypeGuesser(object):
 
     @staticmethod
     def isInteger(string):
-        if string[0] not in "123456789":
+        if string[0] == "0":
             return False
 
         try:
@@ -116,11 +112,12 @@ class TypeGuesser(object):
             if not self.fileSample:
                 warn("No lines found in file %s" % self.file)
                 return
-
+        #print self.types
         for row in self.fileSample:
             for i, dataType in enumerate(self.types):
+                #print i, row[i]
                 if dataType is None:
-                    possibleTypes = ["bool", "date", "timestamp", "int", "bigint"]
+                    possibleTypes = ["boolean", "int", "numeric", "date", "timestamp"]
 
                     for possibleType in possibleTypes:
                         if self.dispatch[possibleType](row[i]):
@@ -130,9 +127,20 @@ class TypeGuesser(object):
                     if self.types[i] is None:
                         self.types[i] = "text"
 
-                elif dataType == "bool":
+                elif dataType == "boolean":
                     if not self.isBool(row[i]):
                         self.types[i] = "text"
+
+                elif dataType == "int":
+                    if not self.isInteger(row[i]):
+                        if self.isNumeric(row[i]):
+                            self.types[i] = "numeric"
+                        else:
+                            self.types[i] = "int"
+
+                elif dataType == "numeric":
+                    if not self.isNumeric(row[i]):
+                        self.types = "text"
 
                 elif dataType == "date":
                     if not self.isDate(row[i]):
@@ -145,12 +153,7 @@ class TypeGuesser(object):
                     if not self.isTimestamp(row[i]):
                             self.types[i] = "text"
 
-                elif dataType == "int":
-                    if not self.isInteger(row[i]):
-                        if self.isNumeric(row[i]):
-                            self.types[i] = "numeric"
-                        else:
-                            self.types[i] = "int"
+
 
 
 
