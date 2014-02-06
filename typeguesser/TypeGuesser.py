@@ -6,7 +6,8 @@ from dateutil import parser as dateParser
 
 
 class TypeGuesser(object):
-    def __init__(self, fileName, hasHeader, sampleProbability=None, delimiter=',', quotechar='"'):
+    def __init__(self, fileName, hasHeader, sampleProbability=None, delimiter=',', quotechar='"'
+            , tableName=None):
         self.file = fileName
         self.hasHeader = hasHeader
 
@@ -19,6 +20,7 @@ class TypeGuesser(object):
         self.quoteChar = quotechar
         self.fileSample = []
         self.types = []
+        self.columns = []
 
         self.dispatch = {
             "boolean": self.isBool,
@@ -27,6 +29,11 @@ class TypeGuesser(object):
             "numeric": self.isNumeric,
             "int": self.isInteger
         }
+
+        if tableName is None:
+            self.tableName = self.file.replace(".csv", "")
+        else:
+            self.tableName = tableName
 
     def sampleFile(self):
         """
@@ -54,6 +61,7 @@ class TypeGuesser(object):
                                         (rowCounter, colCount, len(row)))
 
                 if rowCounter == 1 and self.hasHeader:
+                    self.columns = row
                     continue
 
                 if self.sampleProbability is None or random.random() <= self.sampleProbability:
@@ -61,6 +69,9 @@ class TypeGuesser(object):
 
         self.fileSample = result
         self.types = [None] * colCount
+
+        if not self.hasHeader:
+            self.columns = ["col" + str(i) for i in list(range(colCount))]
 
     @staticmethod
     def isBool(string):
@@ -154,6 +165,26 @@ class TypeGuesser(object):
                             self.types[i] = "text"
 
 
+    def getCreateStatement(self):
+        if any([x is None for x in self.types]):
+            self.guessTypes()
+
+            if any([x is None for x in self.types]):
+                raise Exception("Unable to guess types (got None for at least one data type)")
+
+        lines = ["CREATE TABLE " + self.tableName + " ("]
+
+        for i, column in enumerate(self.columns):
+            nextLine = "\t" + column + " " + self.types[i]
+
+            if i < len(self.columns) - 1:
+                nextLine += ","
+
+            lines.append(nextLine)
+
+        lines.append(");")
+
+        return "\n".join(lines)
 
 
 

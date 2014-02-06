@@ -2,12 +2,12 @@ When importing CSV files to databases, I sometimes find it tedious to create the
 
 For the moment, this is aimed towards PostgreSQL (although that will change) and for now, a very limited number of data types will be supported, namely `text`, `int`, `numeric`, `date`, and `timestamp` (which are the types that I find myself using the most often). 
 
-Here's the way that it works at the time of this writing:
+Here's a quick example:
 
 Input:
 ```
 $cat test.csv
-col1,col2,col3,col4,col5
+a,b,c,d,e
 32,"2013-12-28 22:16:57",0,"True","Here's some text, and some more"
 "17.1","2012-06-29 05:11:00", -3,"False","Yep, more text"
 ```
@@ -21,14 +21,20 @@ tg = TypeGuesser("test.csv", True)
 
 tg.guessTypes()
 
-print tg.types
+print tg.getCreateStatement()
 ```
 
 Output:
 
 ```
 $ python test.py
-['numeric', 'timestamp', 'numeric', 'boolean', 'text']
+CREATE TABLE test (
+	a numeric,
+	b timestamp,
+	c numeric,
+	d boolean,
+	e text
+);
 ```
 
 
