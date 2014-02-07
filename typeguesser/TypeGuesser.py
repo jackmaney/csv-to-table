@@ -227,8 +227,6 @@ class TypeGuesser(object):
                 warn("No lines found in file %s" % self.file)
                 return
 
-        print self.fileSample
-
         for row in self.fileSample:
             self._currentTypes = [None] * len(row)
 
@@ -242,11 +240,6 @@ class TypeGuesser(object):
                 self.reconcileTypes()
             else:
                 self._previousTypes = self._currentTypes
-
-            print "current: " + str(self._currentTypes)
-            print "previous: " + str(self._previousTypes)
-
-            print r"\n\n"
 
         assert all([x is not None for x in self.types]), \
             "Type guessing failed: At least one None found in self.types after type guessing!"

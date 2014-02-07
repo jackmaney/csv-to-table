@@ -33,11 +33,11 @@ Output:
 ```
 $ python test.py
 CREATE TABLE test (
-	a numeric,
-	b timestamp,
-	c numeric,
-	d boolean,
-	e text
+    a numeric,
+    b timestamp,
+    c smallint,
+    d boolean,
+    e text
 );
 ```
 
