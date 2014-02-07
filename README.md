@@ -17,7 +17,7 @@ Code:
 ```
 from typeguesser import TypeGuesser
 
-tg = TypeGuesser("test.csv", True)
+tg = TypeGuesser("test.csv", header=True)
 
 tg.guessTypes()
 

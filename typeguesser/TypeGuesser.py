@@ -6,14 +6,15 @@ from dateutil import parser as dateParser
 
 
 class TypeGuesser(object):
-    def __init__(self, fileName, hasHeader, sampleProbability=None, delimiter=',', quotechar='"'
-            , tableName=None):
+
+    def __init__(self, fileName, header=False, sampleProbability=None, delimiter=',', quotechar='"', tableName=None):
         self.file = fileName
-        self.hasHeader = hasHeader
+        self.hasHeader = header
 
         if sampleProbability is not None and not isinstance(sampleProbability, Real) and \
                 (sampleProbability > 1 or sampleProbability < 0):
-            raise ValueError("The parameter sampleProbability must either be None or a number between 0 and 1")
+            raise ValueError(
+                "The parameter sampleProbability must either be None or a number between 0 and 1")
 
         self.sampleProbability = sampleProbability
         self.delimiter = delimiter
@@ -49,7 +50,8 @@ class TypeGuesser(object):
         rowCounter = 0
 
         with open(self.file) as f:
-            reader = csv.reader(f, delimiter=self.delimiter, quotechar=self.quoteChar)
+            reader = csv.reader(f, delimiter=self.delimiter,
+                                quotechar=self.quoteChar)
             for row in reader:
                 rowCounter += 1
 
@@ -57,8 +59,9 @@ class TypeGuesser(object):
                     colCount = len(row)
                 else:
                     if colCount != len(row):
-                        raise Exception("Column count mismatch at row %d: (%d vs %d)" %
-                                        (rowCounter, colCount, len(row)))
+                        raise Exception(
+                            "Column count mismatch at row %d: (%d vs %d)" %
+                            (rowCounter, colCount, len(row)))
 
                 if rowCounter == 1 and self.hasHeader:
                     self.columns = row
@@ -109,7 +112,7 @@ class TypeGuesser(object):
         try:
             a = float(string)
             n = int(a)
-            
+
             return a == n
         except:
             return False
@@ -123,12 +126,13 @@ class TypeGuesser(object):
             if not self.fileSample:
                 warn("No lines found in file %s" % self.file)
                 return
-        #print self.types
+        # print self.types
         for row in self.fileSample:
             for i, dataType in enumerate(self.types):
-                #print i, row[i]
+                # print i, row[i]
                 if dataType is None:
-                    possibleTypes = ["boolean", "int", "numeric", "date", "timestamp"]
+                    possibleTypes = ["boolean", "int",
+                                     "numeric", "date", "timestamp"]
 
                     for possibleType in possibleTypes:
                         if self.dispatch[possibleType](row[i]):
@@ -164,13 +168,13 @@ class TypeGuesser(object):
                     if not self.isTimestamp(row[i]):
                             self.types[i] = "text"
 
-
     def getCreateStatement(self):
         if any([x is None for x in self.types]):
             self.guessTypes()
 
             if any([x is None for x in self.types]):
-                raise Exception("Unable to guess types (got None for at least one data type)")
+                raise Exception(
+                    "Unable to guess types (got None for at least one data type)")
 
         lines = ["CREATE TABLE " + self.tableName + " ("]
 
@@ -185,12 +189,3 @@ class TypeGuesser(object):
         lines.append(");")
 
         return "\n".join(lines)
-
-
-
-
-                            
-
-
-
-
