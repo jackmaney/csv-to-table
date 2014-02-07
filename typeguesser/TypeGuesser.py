@@ -20,7 +20,18 @@ class TypeGuesser(object):
         self.delimiter = delimiter
         self.quoteChar = quotechar
         self.fileSample = []
+
         self.types = []
+
+        # The data types of the current row
+        self._currentTypes = []
+
+        # The data types of the previous row.
+        # Once we get the types of the current row, we
+        # compare to self.previousTypes and for each column,
+        # we take the more general type.
+        self._previousTypes = []
+
         self.columns = []
 
         self.dispatch = {
@@ -78,7 +89,7 @@ class TypeGuesser(object):
 
     @staticmethod
     def isBool(string):
-        return string.lower() in ["true", "false", "t", "f"]
+        return string.lower() in ["true", "false", "t", "f", "0", "1"]
 
     @staticmethod
     def isTimestamp(string):
@@ -106,9 +117,6 @@ class TypeGuesser(object):
 
     @staticmethod
     def isInteger(string):
-        if string[0] == "0":
-            return False
-
         try:
             a = float(string)
             n = int(a)
@@ -116,6 +124,98 @@ class TypeGuesser(object):
             return a == n
         except:
             return False
+
+    def guessType(self, s):
+
+        if self.isNumeric(s):
+            if float(s) == int(float(s)):
+                if s == "0" or s == "1":
+                    return "boolean"
+
+                if s[0] == "0":
+                    return "text"
+
+                if -32768 <= int(float(s)) <= 32767:
+                    return "smallint"
+
+                if -2147483648 <= int(float(s)) <= 2147483647:
+                    return "int"
+                else:
+                    return "bigint"
+            else:
+                return "numeric"
+        else:
+            if self.isBool(s):
+                return "boolean"
+
+            if self.isTimestamp(s):
+                if self.isDate(s):
+                    return "date"
+                else:
+                    return "timestamp"
+
+        return "text"
+
+    def reconcileTypes(self):
+
+        for i, currentType in enumerate(self._currentTypes):
+            previousType = self._previousTypes[i]
+
+            # The idea is that previousType is the most general datatype
+            # of the rows that we've seen thus far.
+            # So, easy case to deal with: previousType == currentType
+
+            if currentType == previousType:
+                self.types[i] = currentType
+            else:
+                # We'll start with the largest case first:
+
+                if previousType == "text":
+                    self.types[i] = "text"
+                # Now, we'll worry about numeric, we switch only if currentType
+                # is not a number.
+                elif previousType == "numeric":
+                    if currentType in ["numeric", "bigint", "int", "smallint", "boolean"]:
+                        self.types[i] = previousType
+                    else:
+                        self.types[i] = "text"
+                # For bigint, we switch only if currentType is numeric or not a
+                # number
+                elif previousType == "bigint":
+                    if currentType in ["bigint", "int", "smallint", "boolean"]:
+                        self.types[i] = previousType
+                    elif currentType == "numeric":
+                        self.types[i] = "numeric"
+                    else:
+                        self.types[i] = "text"
+                # Same idea...
+                elif previousType == "int":
+                    if currentType in ["int", "smallint", "boolean"]:
+                        self.types[i] = previousType
+                    elif self.types[i] in ["numeric", "bigint"]:
+                        self.types[i] = currentType
+                    else:
+                        self.types[i] = "text"
+                # TODO: Set up a tree of types to replace this non-DRY
+                # stuff....blarg...
+                elif previousType == "smallint":
+                    if currentType in ["smallint", "boolean"]:
+                        self.types[i] = previousType
+                    elif currentType in ["numeric", "bigint", "int"]:
+                        self.types[i] = currentType
+                    else:
+                        self.types[i] = "text"
+                elif previousType == "boolean":
+                    if currentType in ["numeric", "bigint", "int", "smallint", "boolean"]:
+                        self.types[i] = currentType
+                    else:
+                        self.types[i] = "text"
+                # We just have two cases left...
+                elif previousType == "timestamp":
+                    if currentType in ["timestamp", "date"]:
+                        self.types[i] = currentType
+                    else:
+                        self.types[i] = "text"
 
     def guessTypes(self):
 
@@ -126,47 +226,30 @@ class TypeGuesser(object):
             if not self.fileSample:
                 warn("No lines found in file %s" % self.file)
                 return
-        # print self.types
+
+        print self.fileSample
+
         for row in self.fileSample:
-            for i, dataType in enumerate(self.types):
-                # print i, row[i]
-                if dataType is None:
-                    possibleTypes = ["boolean", "int",
-                                     "numeric", "date", "timestamp"]
+            self._currentTypes = [None] * len(row)
 
-                    for possibleType in possibleTypes:
-                        if self.dispatch[possibleType](row[i]):
-                            self.types[i] = possibleType
-                            break
+            for i, field in enumerate(row):
+                self._currentTypes[i] = self.guessType(field)
 
-                    if self.types[i] is None:
-                        self.types[i] = "text"
+            assert all([x is not None for x in self._currentTypes]), \
+                "Type guessing incorrect: None values slipped past guessType()!"
 
-                elif dataType == "boolean":
-                    if not self.isBool(row[i]):
-                        self.types[i] = "text"
+            if self._previousTypes:
+                self.reconcileTypes()
+            else:
+                self._previousTypes = self._currentTypes
 
-                elif dataType == "int":
-                    if not self.isInteger(row[i]):
-                        if self.isNumeric(row[i]):
-                            self.types[i] = "numeric"
-                        else:
-                            self.types[i] = "int"
+            print "current: " + str(self._currentTypes)
+            print "previous: " + str(self._previousTypes)
 
-                elif dataType == "numeric":
-                    if not self.isNumeric(row[i]):
-                        self.types = "text"
+            print r"\n\n"
 
-                elif dataType == "date":
-                    if not self.isDate(row[i]):
-                        if self.isTimestamp(row[i]):
-                            self.types[i] = "timestamp"
-                        else:
-                            self.types[i] = "text"
-
-                elif dataType == "timestamp":
-                    if not self.isTimestamp(row[i]):
-                            self.types[i] = "text"
+        assert all([x is not None for x in self.types]), \
+            "Type guessing failed: At least one None found in self.types after type guessing!"
 
     def getCreateStatement(self):
         if any([x is None for x in self.types]):
