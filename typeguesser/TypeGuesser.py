@@ -6,7 +6,6 @@ from dateutil import parser as dateParser
 
 
 class TypeGuesser(object):
-
     def __init__(self, fileName, header=False, sampleProbability=None, delimiter=',', quotechar='"', tableName=None):
         self.file = fileName
         self.hasHeader = header
@@ -127,6 +126,10 @@ class TypeGuesser(object):
 
     def guessType(self, s):
 
+        # If our field is null, then we have no guess, so return None
+        if not s:
+            return None
+
         if self.isNumeric(s):
             if float(s) == int(float(s)):
                 if s == "0" or s == "1":
@@ -166,9 +169,18 @@ class TypeGuesser(object):
             # So, easy case to deal with: previousType == currentType
 
             if currentType == previousType:
+                #includes both being None
                 self.types[i] = currentType
             else:
-                # We'll start with the largest case first:
+                # If one of currentType or previousType is None,
+                # take whichever isn't None
+
+                if previousType is None:
+                    self.types[i] = currentType
+                elif currentType is None:
+                    self.types[i] = previousType
+
+                # With that out of the way, we'll start with the largest type first:
 
                 if previousType == "text":
                     self.types[i] = "text"
@@ -233,16 +245,15 @@ class TypeGuesser(object):
             for i, field in enumerate(row):
                 self._currentTypes[i] = self.guessType(field)
 
-            assert all([x is not None for x in self._currentTypes]), \
-                "Type guessing incorrect: None values slipped past guessType()!"
-
             if self._previousTypes:
                 self.reconcileTypes()
-            else:
-                self._previousTypes = self._currentTypes
 
-        assert all([x is not None for x in self.types]), \
-            "Type guessing failed: At least one None found in self.types after type guessing!"
+            self._previousTypes = self._currentTypes
+
+        # At this point, we *could* have Nones in self.types if a column has all null values.
+        # In that case, we'll guess a type of "text".
+
+        self.types = [x if x is not None else "text" for x in self.types]
 
     def getCreateStatement(self):
         if any([x is None for x in self.types]):
