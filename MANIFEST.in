@@ -1,0 +1,5 @@
+include csv-to-table
+include *.md
+include *.txt
+recursive-include typeguesser *
+recursive-exclude typeguesser *.pyc

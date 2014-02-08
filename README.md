@@ -2,6 +2,15 @@ When importing CSV files to databases, I sometimes find it tedious to create the
 
 For the moment, this is aimed towards PostgreSQL (although that will change) and for now, a very limited number of data types will be supported, namely `text`, `boolean`, `smallint`, `int`, `bigint`, `numeric`, `date`, and `timestamp` (which are the types that I find myself using the most often). 
 
+To install, you can use pip:
+
+    sudo pip install csv-to-table
+
+or you can grab the code (via either a `git clone` or just downloading a zip file of the repository) and then doing a
+
+    python setup.py install
+
+
 Here's the flowchart of the type guessing (it's also available in the `images` folder of this repo):
 
 ![flowchart](https://github.com/jackmaney/csv-to-table/blob/master/images/type_guessing_flowchart.png?raw=true)
