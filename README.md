@@ -41,5 +41,44 @@ CREATE TABLE test (
 );
 ```
 
+Or, equivalently, you can use the included script `csv-to-table.py`:
+
+```
+$ ./csv-to-table.py -h
+usage: csv-to-table.py [-h] [--header] [--sample SAMPLE]
+                       [--quotechar QUOTECHAR] [--table_name TABLE_NAME]
+                       file
+
+positional arguments:
+  file                  The name (and path) of the target CSV file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --header              Indicate whether or not the file has a header
+  --sample SAMPLE       Sampling probability (between 0 and 1). If set, this
+                        gives the sampling probability for rows of the given
+                        CSV file
+  --quotechar QUOTECHAR
+                        The quote character to use for the CSV file (default
+                        '"')
+  --table_name TABLE_NAME
+                        The name of the table desired in the output
+```
+
+So, in particular:
+
+```
+$ ./csv-to-table.py --header test.csv
+CREATE TABLE test (
+	a numeric,
+	b timestamp,
+	c smallint,
+	d boolean,
+	e text
+);
+```
+
+
+
 
 
