@@ -6,7 +6,9 @@ from dateutil import parser as dateParser
 
 
 class TypeGuesser(object):
-    def __init__(self, fileName, header=False, sampleProbability=None, delimiter=',', quotechar='"', tableName=None):
+
+    def __init__(self, fileName, header=False, sampleProbability=None,
+                 delimiter=',', quotechar='"', tableName=None, columns=None):
         self.file = fileName
         self.hasHeader = header
 
@@ -31,7 +33,10 @@ class TypeGuesser(object):
         # we take the more general type.
         self._previousTypes = []
 
-        self.columns = []
+        if columns is None:
+            self.columns = []
+        else:
+            self.columns = columns
 
         self.dispatch = {
             "boolean": self.isBool,
@@ -83,7 +88,7 @@ class TypeGuesser(object):
         self.fileSample = result
         self.types = [None] * colCount
 
-        if not self.hasHeader:
+        if not self.hasHeader and not self.columns:
             self.columns = ["col" + str(i) for i in list(range(colCount))]
 
     @staticmethod
@@ -169,7 +174,7 @@ class TypeGuesser(object):
             # So, easy case to deal with: previousType == currentType
 
             if currentType == previousType:
-                #includes both being None
+                # includes both being None
                 self.types[i] = currentType
             else:
                 # If one of currentType or previousType is None,
@@ -180,7 +185,8 @@ class TypeGuesser(object):
                 elif currentType is None:
                     self.types[i] = previousType
 
-                # With that out of the way, we'll start with the largest type first:
+                # With that out of the way, we'll start with the largest type
+                # first:
 
                 if previousType == "text":
                     self.types[i] = "text"

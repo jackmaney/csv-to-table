@@ -9,7 +9,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="csv_to_table",
-    version="0.0.1",
+    version="0.0.2",
     description="Generates a CREATE TABLE statement from a CSV file by guessing at column types",
     author="Jack Maney",
     author_email="jackmaney@gmail.com",
