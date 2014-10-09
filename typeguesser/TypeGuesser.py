@@ -157,10 +157,13 @@ class TypeGuesser(object):
                 if s[0] == "0":
                     return "text"
 
+                if -32768 <= int(float(s)) <= 32767:
+                    return "smallint"
+
                 if -2147483648 <= int(float(s)) <= 2147483647:
-                    return "numeric"
+                    return "int"
                 else:
-                    return "numeric"
+                    return "bigint"
             else:
                 return "numeric"
         else:
