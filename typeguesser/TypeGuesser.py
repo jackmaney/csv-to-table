@@ -1,4 +1,5 @@
 import csv
+import re
 from numbers import Real
 import random
 from warnings import warn
@@ -8,7 +9,8 @@ from dateutil import parser as dateParser
 class TypeGuesser(object):
 
     def __init__(self, fileName, header=False, sampleProbability=None,
-                 delimiter=',', quotechar='"', tableName=None, columns=None):
+                 delimiter=',', quotechar='"', tableName=None, columns=None,
+                 lowercaseHeader=False):
         self.file = fileName
         self.hasHeader = header
 
@@ -20,6 +22,7 @@ class TypeGuesser(object):
         self.sampleProbability = sampleProbability
         self.delimiter = delimiter
         self.quoteChar = quotechar
+        self.lowercaseHeader = lowercaseHeader
         self.fileSample = []
 
         self.types = []
@@ -79,7 +82,9 @@ class TypeGuesser(object):
                             (rowCounter, colCount, len(row)))
 
                 if rowCounter == 1 and self.hasHeader:
-                    self.columns = row
+                    self.columns = self.tidyColumns(row)
+                    if self.lowercaseHeader:
+                        self.columns = [x.lower() for x in self.columns]
                     continue
 
                 if self.sampleProbability is None or random.random() <= self.sampleProbability:
@@ -128,6 +133,15 @@ class TypeGuesser(object):
             return a == n
         except:
             return False
+
+    @staticmethod
+    def alterColumnName(name):
+        return re.sub('[-\s]', '_', name)
+
+
+    def tidyColumns(self, columns):
+        return map(self.alterColumnName, columns)
+
 
     def guessType(self, s):
 

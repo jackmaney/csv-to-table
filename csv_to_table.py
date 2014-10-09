@@ -11,6 +11,11 @@ def main():
         "file", type=str, help="The name (and path) of the target CSV file")
     argParser.add_argument(
         "--header", help="Indicate whether or not the file has a header", action="store_true")
+
+    argParser.add_argument(
+        "--lowercase_header", help="Indicate whether or not to lowercase inferred " +
+                        "column names.", action="store_true")
+
     argParser.add_argument("--sample", type=float, help="Sampling probability (between 0 and 1). " +
                            "If set, this gives the sampling probability for rows of the given CSV file")
     argParser.add_argument(
@@ -28,7 +33,8 @@ def main():
 
     tg = TypeGuesser(
         args.file, header=args.header, sampleProbability=args.sample,
-        quotechar=args.quotechar, tableName=args.table_name, columns=columns)
+        quotechar=args.quotechar, tableName=args.table_name, columns=columns,
+        lowercaseHeader=args.lowercase_header)
 
     tg.guessTypes()
 
