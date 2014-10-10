@@ -64,6 +64,8 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --header              Indicate whether or not the file has a header
+  --lowercase_header    Indicate whether or not to lowercase inferred column
+                        names.
   --sample SAMPLE       Sampling probability (between 0 and 1). If set, this
                         gives the sampling probability for rows of the given
                         CSV file
@@ -72,6 +74,7 @@ optional arguments:
                         '"')
   --table_name TABLE_NAME
                         The name of the table desired in the output
+
 ```
 
 So, in particular:
