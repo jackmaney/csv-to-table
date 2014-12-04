@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+
 from typeguesser import TypeGuesser
 
 
@@ -21,6 +22,8 @@ def main():
     argParser.add_argument(
         "--quotechar", help="The quote character to use for the CSV file (default '\"')", default="\"")
     argParser.add_argument(
+        "--delimiter", help="The delimiter to use for the CSV file (default ',')", default=',')
+    argParser.add_argument(
         "--table_name", help="The name of the table desired in the output")
     argParser.add_argument("--columns", type=str,
                            help="A comma-delimited list of column names that you wish to use")
@@ -33,8 +36,8 @@ def main():
 
     tg = TypeGuesser(
         args.file, header=args.header, sampleProbability=args.sample,
-        quotechar=args.quotechar, tableName=args.table_name, columns=columns,
-        lowercaseHeader=args.lowercase_header)
+        quotechar=args.quotechar, delimiter=args.delimiter, tableName=args.table_name,
+        columns=columns, lowercaseHeader=args.lowercase_header)
 
     tg.guessTypes()
 
