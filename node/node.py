@@ -1,4 +1,4 @@
-from util import *
+from util import is_string
 
 
 class Node(object):

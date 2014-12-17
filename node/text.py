@@ -24,8 +24,7 @@ class VarCharNode(Node):
 
     def __eq__(self, other):
 
-        return super(VarCharNode, self).__eq__(other) and \
-            self.n == other.n
+        return super(VarCharNode, self).__eq__(other) and self.n == other.n
 
     def __ne__(self, other):
         return not self.__eq__(other)
