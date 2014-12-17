@@ -71,9 +71,7 @@ class NumericRangeNode(Node):
     def __init__(self, name, lower, upper, indicator_function=None,
                  parent=None, children=[]):
 
-        if indicator_function is None:
-            indicator_function = range_indicator_function(
-                is_numeric, lower, upper)
+        indicator_function = range_indicator_function(is_numeric, lower, upper)
 
         super(NumericRangeNode, self).__init__(
             name, indicator_function=indicator_function, parent=parent,
@@ -108,9 +106,7 @@ class IntRangeNode(NumericRangeNode):
     def __init__(self, name, lower, upper, indicator_function=None,
                  parent=None, children=[]):
 
-        if indicator_function is None:
-            indicator_function = range_indicator_function(
-                is_int, lower, upper)
+        indicator_function = range_indicator_function(is_int, lower, upper)
 
         super(NumericRangeNode, self).__init__(
             name, indicator_function=indicator_function, parent=parent,
