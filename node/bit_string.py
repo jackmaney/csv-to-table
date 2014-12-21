@@ -21,20 +21,20 @@ class VarBitNode(Node):
             match = re.match(pattern, bit_str)
             return match and match.groups() and len(match.groups()[0]) <= n
 
+        self.n = n
+
         super(VarBitNode, self).__init__(
             name, indicator_function=indicator_function, parent=parent,
             children=children
         )
 
-        self.n = n
-
-    def _validate_params(self, name, indicator_function, parent, children, n):
+    def _validate_params(self, name, indicator_function, parent, children):
 
         super(VarBitNode, self)._validate_params(
             name, indicator_function, parent, children
         )
 
-        if not is_int(n) or n <= 0:
+        if not is_int(self.n) or self.n <= 0:
             raise ValueError("The 'n' parameter must be a positive integer")
 
     def __eq__(self, other):
@@ -63,9 +63,9 @@ class BitNode(VarBitNode):
             match = re.match(pattern, bit_str)
             return match and match.groups() and len(match.groups()[0]) == n
 
+        self.n = n
+
         super(VarBitNode, self).__init__(
             name, indicator_function=indicator_function, parent=parent,
             children=children
         )
-
-        self.n = n

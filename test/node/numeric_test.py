@@ -1,5 +1,5 @@
 from node.numeric import NumericRangeNode, IntRangeNode
-from nose.tools import ok_
+from nose.tools import ok_, eq_
 
 
 def test_int_range_node():
@@ -10,6 +10,9 @@ def test_int_range_node():
     too_high = 15
     just_right = 5
     wtf = 'hurr durr!'
+
+    eq_(int_range_node.lower, 0, "Lower checks out")
+    eq_(int_range_node.upper, 10, "Upper checks out")
 
     ok_(not int_range_node.indicator_function(too_low),
         "Kept out numbers that are too low")
@@ -29,6 +32,9 @@ def test_numeric_range_node():
     too_high = 3
     just_right = 1 + 1e-5
     wtf = "blarg"
+
+    eq_(num_range_node.lower, -3.1, "Lower checks out")
+    eq_(num_range_node.upper, 2.71828, "Upper checks out")
 
     ok_(not num_range_node.indicator_function(too_low),
         "Kept out numbers that are too low")
