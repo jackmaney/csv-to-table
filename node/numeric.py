@@ -1,5 +1,9 @@
 from node import Node
-from util import is_int, is_numeric, range_indicator_function
+from util import is_int, is_numeric
+
+
+def range_indicator_function(f, lower, upper):
+    return lambda x: f(x) and lower <= x and x <= upper
 
 
 class NumericRangeNode(Node):
@@ -8,23 +12,22 @@ class NumericRangeNode(Node):
 
         indicator_function = range_indicator_function(is_numeric, lower, upper)
 
+        self.lower = lower
+        self.upper = upper
+
         super(NumericRangeNode, self).__init__(
             name, indicator_function=indicator_function, parent=parent,
             children=children)
 
-        self.lower = lower
-        self.upper = upper
-
-    def _validate_params(self, name, indicator_function, parent, children,
-                         lower, upper):
-        super(self.__class__, self)._validate_params(
+    def _validate_params(self, name, indicator_function, parent, children):
+        super(NumericRangeNode, self)._validate_params(
             name, indicator_function, parent, children)
 
-        if not is_numeric(lower) or not is_numeric(upper):
+        if not is_numeric(self.lower) or not is_numeric(self.upper):
             raise ValueError(
                 "The 'lower' and 'upper' parameters must be numeric")
 
-        if lower >= upper:
+        if self.lower >= self.upper:
             raise ValueError("'lower' must be less than 'upper'")
 
     def __eq__(self, other):
@@ -42,21 +45,20 @@ class IntRangeNode(NumericRangeNode):
 
         indicator_function = range_indicator_function(is_int, lower, upper)
 
+        self.lower = lower
+        self.upper = upper
+
         super(NumericRangeNode, self).__init__(
             name, indicator_function=indicator_function, parent=parent,
             children=children)
 
-        self.lower = lower
-        self.upper = upper
-
-    def _validate_params(self, name, indicator_function, parent, children,
-                         lower, upper):
-        super(self.__class__, self)._validate_params(
+    def _validate_params(self, name, indicator_function, parent, children):
+        super(NumericRangeNode, self)._validate_params(
             name, indicator_function, parent, children)
 
-        if not is_int(lower) or not is_int(upper):
+        if not is_int(self.lower) or not is_int(self.upper):
             raise ValueError(
                 "The 'lower' and 'upper' parameters must be numeric")
 
-        if lower >= upper:
+        if self.lower >= self.upper:
             raise ValueError("'lower' must be less than 'upper'")
