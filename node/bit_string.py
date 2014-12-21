@@ -10,7 +10,7 @@ class VarBitNode(Node):
 
         def indicator_function(bit_str):
 
-            pattern = "^B'([01]+)'$"
+            pattern = "^[bB]'([01]+)'$"
             # TODO: Take account of bit strings in hex form
             # This requires converting to a string of 0's and 1's.
             # Not seeing any convenient method to do that, so I'll
