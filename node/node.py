@@ -3,8 +3,7 @@ from util import is_string
 
 class Node(object):
 
-    def __init__(self, name, indicator_function=None,
-                 parent=None, children=[]):
+    def __init__(self, name, parent=None, children=[]):
 
         self._validate_params(name, parent, children)
 

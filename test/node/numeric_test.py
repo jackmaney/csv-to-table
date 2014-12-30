@@ -1,5 +1,27 @@
-from node.numeric import NumericRangeNode, IntRangeNode
-from nose.tools import ok_, eq_
+from nose.tools import eq_, ok_
+
+from node.numeric import IntRangeNode, NumericRangeNode
+
+
+def test_bad_nodes():
+
+    bad_numeric = False
+    bad_int = False
+
+    try:
+        NumericRangeNode('numeric', lower=1.23, upper=-2.001)
+    except:
+        bad_numeric = True
+
+    ok_(bad_numeric, "Can't create NumericRangeNodes with lower > upper")
+
+    try:
+        IntRangeNode('int', lower=1, upper=-2)
+    except:
+        bad_int = True
+
+    ok_(bad_int, "Can't create IntRangeNodes with lower > upper")
+
 
 
 def test_int_range_node():
