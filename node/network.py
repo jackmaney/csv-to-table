@@ -1,68 +1,44 @@
+from netaddr import EUI, IPNetwork
 from node import Node
 from util import is_string
-from netaddr import IPNetwork, EUI
 
-
-def is_inet(x):
-
-    if not is_string(x):
-        return False
-
-    try:
-        IPNetwork(x)
-        return True
-    except:
-        return False
-
-
-def is_cidr(x):
-
-    if not is_string(x):
-        return False
-
-    try:
-        return x == str(IPNetwork(x).cidr)
-    except:
-        return False
-
-
-def is_mac_address(x):
-
-    if not is_string(x):
-        return False
-
-    try:
-        EUI(x)
-        return True
-    except:
-        return False
-
-
-# TODO: I think this can all be refactored with metaclasses. Look into that...
 
 class InetNode(Node):
 
-    def __init__(self, name, parent=None, children=[]):
+    def indicator_function(self, field):
 
-        super(InetNode, self).__init__(
-            name, indicator_function=is_inet, parent=parent, children=children
-        )
+        if not is_string(field):
+            return False
+
+        try:
+            IPNetwork(field)
+            return True
+        except:
+            return False
 
 
 class CidrNode(Node):
 
-    def __init__(self, name, parent=None, children=[]):
+    def indicator_function(self, field):
 
-        super(CidrNode, self).__init__(
-            name, indicator_function=is_cidr, parent=parent, children=children
-        )
+        if not is_string(field):
+            return False
+
+        try:
+            return field == str(IPNetwork(field).cidr)
+        except:
+            return False
 
 
 class MacAddressNode(Node):
 
-    def __init__(self, name, parent=None, children=[]):
+    def indicator_function(self, field):
 
-        super(MacAddressNode, self).__init__(
-            name, indicator_function=is_mac_address, parent=parent,
-            children=children
-        )
+        if not is_string(field):
+            return False
+
+        try:
+            EUI(field)
+            return True
+        except:
+            return False

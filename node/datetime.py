@@ -1,6 +1,7 @@
 from dateutil.parser import parse
 
 from node import Node
+from util import is_string
 
 
 # TODO: Add more functionality around time zones.
@@ -8,33 +9,28 @@ from node import Node
 
 class DateTimeNode(Node):
 
-    def __init__(self, name, parent=None, children=[]):
+    def indicator_function(self, field):
+        if not is_string(field):
+            return False
 
-        def indicator_function(dt):
-            try:
-                parse(dt)
-                return True
-            except:
-                return False
-
-        super(DateTimeNode, self).__init__(
-            name, indicator_function=indicator_function, parent=parent,
-            children=children
-        )
+        try:
+            parse(field)
+            return True
+        except:
+            return False
 
 
 class DateNode(Node):
 
     def __init__(self, name, parent=None, children=[]):
 
-        def indicator_function(dt):
+        def indicator_function(self, field):
+
+            if not is_string(field):
+                return False
+
             try:
-                parsed = parse(dt)
+                parsed = parse(field)
                 return (parsed.hour, parsed.minute, parsed.second) == (0, 0, 0)
             except:
                 return False
-
-        super(DateNode, self).__init__(
-            name, indicator_function=indicator_function, parent=parent,
-            children=children
-        )

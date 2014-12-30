@@ -1,24 +1,18 @@
-from node import Node
-from util import is_string
 from uuid import UUID
 
-
-def is_uuid(x):
-
-    if not is_string(x):
-        return False
-
-    try:
-        UUID(x)
-        return True
-    except:
-        return False
+from node import Node
+from util import is_string
 
 
 class UUIDNode(Node):
 
-    def __init__(self, name, parent=None, children=[]):
+    def indicator_function(self, field):
 
-        super(InetNode, self).__init__(
-            name, indicator_function=is_uuid, parent=parent, children=children
-        )
+        if not is_string(field):
+            return False
+
+        try:
+            UUID(field)
+            return True
+        except:
+            return False

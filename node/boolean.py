@@ -7,14 +7,10 @@ class BooleanNode(Node):
     def __init__(self, name, values=["TRUE", "FALSE"],
                  parent=None, children=[]):
 
-        indicator_function = lambda x: x in values
-
-        super(BooleanNode, self).__init__(
-            name, indicator_function=indicator_function, parent=parent,
-            children=children
-        )
-
         self.values = values
+
+        super(BooleanNode, self).__init__(name, parent=parent,
+                                          children=children)
 
     def _validate_params(self, name, indicator_function, parent,
                          children, values):
@@ -31,6 +27,10 @@ class BooleanNode(Node):
                 raise ValueError(
                     "The 'values' list contains a non-string element: %s" %
                     str(value))
+
+    def indicator_function(self, field):
+
+        return is_string(field) and field in self.values
 
     def __eq__(self, other):
 

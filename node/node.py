@@ -6,23 +6,16 @@ class Node(object):
     def __init__(self, name, indicator_function=None,
                  parent=None, children=[]):
 
-        self._validate_params(name, indicator_function, parent, children)
+        self._validate_params(name, parent, children)
 
         self.name = name
-        self.indicator_function = indicator_function
         self.parent = parent
         self.children = children
 
-    def _validate_params(self, name, indicator_function, parent, children):
+    def _validate_params(self, name, parent, children):
 
         if not name or not is_string(name):
             raise ValueError("The 'name' parameter must be a non-empty string")
-
-        if indicator_function is not None and \
-                not hasattr(indicator_function, "__call__"):
-            raise ValueError(
-                """The 'indicator_function' must either be None or a function"""
-                )
 
         if parent is not None and not isinstance(parent, Node):
             raise ValueError("The 'parent' must be None or a Node")
@@ -33,6 +26,9 @@ class Node(object):
                     raise ValueError("Every child must be a Node!")
         else:
             raise ValueError("'children' must be a list of Nodes!")
+
+    def indicator_function(self, field):
+        return True
 
     def __eq__(self, other):
         """
