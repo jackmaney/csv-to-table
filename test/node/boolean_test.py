@@ -1,6 +1,6 @@
 from nose.tools import eq_, ok_
 
-from node.boolean import BooleanNode
+from node.boolean_node import BooleanNode
 
 
 def test_boolean_node():

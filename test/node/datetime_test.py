@@ -1,6 +1,6 @@
 from nose.tools import ok_
 
-from node.datetime import DateNode, DateTimeNode
+from node.datetime_node import DateNode, DateTimeNode
 
 
 def test_date_node():

@@ -1,6 +1,6 @@
 from nose.tools import eq_, ok_
 
-from node.numeric import IntRangeNode, NumericRangeNode
+from node.numeric_node import IntRangeNode, NumericRangeNode
 
 
 def test_bad_nodes():

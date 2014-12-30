@@ -1,6 +1,6 @@
 from nose.tools import eq_, ok_
 
-from node.bit_string import BitNode, VarBitNode
+from node.bit_string_node import BitNode, VarBitNode
 
 
 def test_varbit_node():

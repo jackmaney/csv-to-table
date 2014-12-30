@@ -1,4 +1,4 @@
-from json import loads
+import json
 
 from node import Node
 from util import is_string
@@ -12,7 +12,7 @@ class JSONNode(Node):
             return False
 
         try:
-            loads(field)
+            json.loads(field)
             return True
         except:
             return False
