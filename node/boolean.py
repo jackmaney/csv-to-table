@@ -12,17 +12,14 @@ class BooleanNode(Node):
         super(BooleanNode, self).__init__(name, parent=parent,
                                           children=children)
 
-    def _validate_params(self, name, indicator_function, parent,
-                         children, values):
+    def _validate_params(self, name, parent, children):
 
-        super(BooleanNode, self)._validate_params(
-            name, indicator_function, parent, children
-        )
+        super(BooleanNode, self)._validate_params(name, parent, children)
 
-        if not isinstance(values, list):
+        if not isinstance(self.values, list):
             raise ValueError("The 'values' parameter must be a list!")
 
-        for value in values:
+        for value in self.values:
             if not is_string(value):
                 raise ValueError(
                     "The 'values' list contains a non-string element: %s" %

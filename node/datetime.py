@@ -22,15 +22,13 @@ class DateTimeNode(Node):
 
 class DateNode(Node):
 
-    def __init__(self, name, parent=None, children=[]):
+    def indicator_function(self, field):
 
-        def indicator_function(self, field):
+        if not is_string(field):
+            return False
 
-            if not is_string(field):
-                return False
-
-            try:
-                parsed = parse(field)
-                return (parsed.hour, parsed.minute, parsed.second) == (0, 0, 0)
-            except:
+        try:
+            parsed = parse(field)
+            return (parsed.hour, parsed.minute, parsed.second) == (0, 0, 0)
+        except:
                 return False
