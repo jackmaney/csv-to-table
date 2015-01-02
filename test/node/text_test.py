@@ -1,5 +1,4 @@
 from nose.tools import ok_
-from nose import with_setup
 
 from node.text_node import VarCharNode, CharNode
 
