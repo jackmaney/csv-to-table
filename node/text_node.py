@@ -10,7 +10,7 @@ class VarCharNode(Node):
         super(VarCharNode, self).__init__(name, parent=parent,
                                           children=children)
 
-    def _validate_params(self, name, parent, children, n):
+    def _validate_params(self, name, parent, children):
         super(VarCharNode, self)._validate_params(name, parent, children)
 
         if not is_int(self.n) or self.n <= 0:
