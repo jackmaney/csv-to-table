@@ -16,8 +16,8 @@ class NumericRangeNode(Node):
         super(NumericRangeNode, self).__init__(name, parent=parent,
                                                children=children)
 
-    def _validate_params(self, name, parent, children):
-        super(NumericRangeNode, self)._validate_params(name, parent, children)
+    def _validate_params(self):
+        super(NumericRangeNode, self)._validate_params()
 
         if not is_numeric(self.lower) or not is_numeric(self.upper):
             raise ValueError(
@@ -49,9 +49,8 @@ class IntRangeNode(NumericRangeNode):
         super(NumericRangeNode, self).__init__(
             name, parent=parent, children=children)
 
-    def _validate_params(self, name, parent, children):
-        super(NumericRangeNode, self)._validate_params(
-            name, parent, children)
+    def _validate_params(self):
+        super(NumericRangeNode, self)._validate_params()
 
         if not is_int(self.lower) or not is_int(self.upper):
             raise ValueError(
@@ -62,3 +61,30 @@ class IntRangeNode(NumericRangeNode):
 
     def indicator_function(self, field):
         return range_indicator_function(is_int, self.lower, self.upper)(field)
+
+
+class SmallIntNode(IntRangeNode):
+
+    def __init__(self, name="smallint", lower=-32768, upper=32767,
+                 parent=None, children=[]):
+
+        super(SmallIntNode, self).__init__(name, lower=lower, upper=upper,
+                                           parent=parent, children=children)
+
+
+class IntegerNode(IntRangeNode):
+
+    def __init__(self, name="int", lower=-2147483648, upper=2147483647,
+                 parent=None, children=[]):
+
+        super(IntegerNode, self).__init__(name, lower=lower, upper=upper,
+                                          parent=parent, children=children)
+
+
+class BigIntNode(IntRangeNode):
+
+    def __init__(self, name="bigint", lower=-9223372036854775808,
+                 upper=9223372036854775807, parent=None, children=[]):
+
+        super(BigIntNode, self).__init__(name, lower=lower, upper=upper,
+                                         parent=parent, children=children)

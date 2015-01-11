@@ -21,8 +21,8 @@ class VarCharNode(Node):
         super(VarCharNode, self).__init__(name, parent=parent,
                                           children=children)
 
-    def _validate_params(self, name, parent, children):
-        super(VarCharNode, self)._validate_params(name, parent, children)
+    def _validate_params(self):
+        super(VarCharNode, self)._validate_params()
 
         if self.n is not None and not is_int(self.n) or self.n <= 0:
             raise ValueError(

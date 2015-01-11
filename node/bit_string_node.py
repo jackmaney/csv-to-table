@@ -13,9 +13,9 @@ class VarBitNode(Node):
         super(VarBitNode, self).__init__(name, parent=parent,
                                          children=children)
 
-    def _validate_params(self, name, parent, children):
+    def _validate_params(self):
 
-        super(VarBitNode, self)._validate_params(name, parent, children)
+        super(VarBitNode, self)._validate_params()
 
         if not is_int(self.n) or self.n <= 0:
             raise ValueError("The 'n' parameter must be a positive integer")

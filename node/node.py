@@ -5,22 +5,23 @@ class Node(object):
 
     def __init__(self, name, parent=None, children=[]):
 
-        self._validate_params(name, parent, children)
-
         self.name = name
         self.parent = parent
         self.children = children
 
-    def _validate_params(self, name, parent, children):
+        self._validate_params()
 
-        if not name or not is_string(name):
+
+    def _validate_params(self):
+
+        if not self.name or not is_string(self.name):
             raise ValueError("The 'name' parameter must be a non-empty string")
 
-        if parent is not None and not isinstance(parent, Node):
+        if self.parent is not None and not isinstance(self.parent, Node):
             raise ValueError("The 'parent' must be None or a Node")
 
-        if isinstance(children, list):
-            for child in children:
+        if isinstance(self.children, list):
+            for child in self.children:
                 if not isinstance(child, Node):
                     raise ValueError("Every child must be a Node!")
         else:
